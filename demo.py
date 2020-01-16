@@ -16,6 +16,7 @@ from PIL import ImageFont, ImageDraw, Image
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 from face_recog import *
+from compare_new_user import *
 
 r2 = redis.StrictRedis( port=6380)
 
@@ -58,7 +59,7 @@ def main(sess,age,gender,train_mode,images_pl):
     img_size = 160
     font = cv2.FONT_HERSHEY_DUPLEX
     # capture video
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     inum=8
@@ -143,6 +144,13 @@ def main(sess,age,gender,train_mode,images_pl):
         key = cv2.waitKey(1)
 
         if key == 27:
+            length = len(face_recog.new_user_compare)
+            for i in range(length):
+                new_user =face_recog.new_user_compare[length-1-i][1]
+                target = face_recog.new_user_compare[length-1-i][0]
+                detect_fake_user = Detect_fake_user(new_user)
+                detect_fake_user.compare_new_user()
+            print('finish')
             break
 
 def load_network(model_path):

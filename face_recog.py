@@ -5,6 +5,7 @@ import cv2
 import time
 import os
 import numpy as np
+import shutil
 
 class FaceRecog():
     def __init__(self):
@@ -15,6 +16,7 @@ class FaceRecog():
         self.known_face_names = []
         self.frame=[]
         self.conter={}
+        self.new_user_compare=[]
         # Load sample pictures and learn how to recognize it.
         self.dirname = '/etc/knowns'
         #global files
@@ -42,26 +44,18 @@ class FaceRecog():
 
     def new_user(self):
         folder = os.listdir(self.dirname)
-        try :
-            folder_name = str(max(map(int, folder))+1)
-        except:
-            folder_name = "1"
         rgb_small_frame = self.frame[:, :, ::-1]
         save_img = rgb_small_frame[self.face_locations[0][0] : self.face_locations[0][2],self.face_locations[0][3]:self.face_locations[0][1]]
         save_img = cv2.resize(save_img, (save_img.shape[1]*4,save_img.shape[0]*4))
         if len(face_recognition.face_encodings(save_img))==0:
             print("fail recognize new user")
             return "detecting"
-        self.known_face_names.append(folder_name)
-        face_encoding = face_recognition.face_encodings(save_img)[0]
-        self.known_face_encodings.append(face_encoding)   
-        self.conter[folder_name]=[-11,0]
-        self.add_img(self.mkdir())
+        folder_name = self.mkdir(save_img)
         return folder_name
 
     def add_img(self, name):
         self.conter[name][1] = time.time()
-        if self.conter[name][1]-self.conter[name][0] < 1:  #save each 5 second
+        if self.conter[name][1]-self.conter[name][0] < 1:  #save each 1 second
             return "save delay"
         self.conter[name][0]= time.time()
         folder = os.listdir(self.dirname+"/"+name)
@@ -90,14 +84,23 @@ class FaceRecog():
         print("save img")  
         return name +  '_'  + str(max(file_list)+1)+".jpg"
 
-    def mkdir(self):
+    def mkdir(self,save_img):
         folder = os.listdir(self.dirname)
         try :
             folder_name = str(max(map(int, folder))+1)
         except:
             folder_name = "1"
         os.makedirs(self.dirname+'/'+folder_name)
+        file_name = self.dirname+"/"+folder_name+'/'+folder_name +  "_0.jpg"
+        cv2.imwrite(file_name,save_img)
+        if len(os.listdir(self.dirname+'/'+folder_name)) ==0:
+            shutil.rmtree(self.dirname+'/'+folder_name)
+            return "detecting"
+        self.known_face_names.append(folder_name +  "_0.jpg")
+        face_encoding = face_recognition.face_encodings(save_img)[0]
+        self.known_face_encodings.append(face_encoding) 
         print("new folder !!", folder_name)
+        self.conter[folder_name]=[-11,0]
         return folder_name
 
     def get_frame(self, location):
@@ -117,7 +120,7 @@ class FaceRecog():
             distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
             predict_list = np.where(distances>0)
             predict_label = {}
-            result =""
+            result ="detecting"
             min=1
             for i in predict_list[0]:
                 if not self.known_face_names[i].split("_")[0] in predict_label.keys():
@@ -133,16 +136,18 @@ class FaceRecog():
                 if min > predict_label[i]:
                     min = predict_label[i]
                     result = i
-
-            if min > 0.45:
+            print(result,min)
+            if min > 0.45:  
+                print(result, min)
                 name = self.new_user()
-                print(predict_label)
+                if name != "detecting" and result != "detecting":
+                    self.new_user_compare.append((result, name))
+
             elif min <0.35 :
                 name = result
                 self.add_img(name)
             else :
                 name = result
-            print(name,min)
             self.face_names=name
         return str(self.face_names)
 
