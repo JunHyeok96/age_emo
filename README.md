@@ -4,7 +4,7 @@
 
 1. 웹캡 or 영상속 얼굴을 인식합니다.
 
-![Screenshot from 2020-01-16 17-08-57](https://user-images.githubusercontent.com/52908154/72505874-22dd7a00-3884-11ea-91f3-f60af55a2d5e.png)
+![Screenshot from 2020-01-16 17-08-57](https://user-images.githubusercontent.com/52908154/72505874-22dd7a00-3884-11ea-91f3-f60af55a2d5e.png){: width="100" height="100"}
 
 2. 인식한 얼굴의 나이, 성별, 감정을 분석합니다.
 
@@ -37,4 +37,4 @@
 (새로운 폴더에 이미지가 저장되는 모습)
 
 ![Screenshot from 2020-01-16 17-17-08](https://user-images.githubusercontent.com/52908154/72506336-068e0d00-3885-11ea-97de-459c0534bff4.png)
-(프로그램이 종료되고 기존의 유저 )
+(프로그램이 종료되고 기존의 유저 폴더에 병합됨)
