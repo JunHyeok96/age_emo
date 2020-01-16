@@ -151,10 +151,3 @@ class FaceRecog():
             self.face_names=name
         return str(self.face_names)
 
-    def get_jpg_bytes(self):
-        frame = self.get_frame()
-        # We are using Motion JPEG, but OpenCV defaults to capture raw images,
-        # so we must encode it into JPEG in order to correctly display the
-        # video stream.
-        ret, jpg = cv2.imencode('.jpg', frame)
-        return jpg.tobytes()
