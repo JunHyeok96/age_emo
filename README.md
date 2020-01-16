@@ -1,10 +1,10 @@
 # people_age_emo_id
 
-##demo.py
+demo.py
 
 1. 웹캡 or 영상속 얼굴을 인식합니다.
 
-![Screenshot from 2020-01-16 17-08-57](https://user-images.githubusercontent.com/52908154/72505874-22dd7a00-3884-11ea-91f3-f60af55a2d5e.png){: width="100" height="100"}
+![Screenshot from 2020-01-16 17-08-57](https://user-images.githubusercontent.com/52908154/72505874-22dd7a00-3884-11ea-91f3-f60af55a2d5e.png)
 
 2. 인식한 얼굴의 나이, 성별, 감정을 분석합니다.
 
