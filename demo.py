@@ -11,16 +11,13 @@ from imutils.face_utils import FaceAligner
 from imutils.face_utils import rect_to_bb
 import base64
 import io
-import redis
 from PIL import ImageFont, ImageDraw, Image
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 from face_recog import *
 from compare_new_user import *
 
-r2 = redis.StrictRedis( port=6380)
-
-def get_args():
+def get_args():  
     parser = argparse.ArgumentParser(description="This script detects faces from web cam input, "
                                                  "and estimates age and gender for the detected faces.",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -81,7 +78,7 @@ def main(sess,age,gender,train_mode,images_pl):
         prob_list = []
         label_list = []
         id_list = []
-        if len(detected)>0:
+        if len(detected)>0:    #age, gender, emo, id regonize
             for i, d in enumerate(detected):
                 x1, y1, x2, y2, w, h = d.left(), d.top(), d.right() + 1, d.bottom() + 1, d.width(), d.height()
                 roi = gray[y1:y2, x1:x2]
@@ -112,38 +109,12 @@ def main(sess,age,gender,train_mode,images_pl):
                 #print(label)
         else:
             pass
-        # draw results
-        for i in range(len(label_list)):
-            aaggee = int(ages[i])
-            if genders[i] == 0:
-                ggeenn = 'woman'
-            else:
-                ggeenn = 'man'
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            r_imgByteArr = io.BytesIO()
-            r_imgByteArr.flush()
-            img2 = Image.fromarray(img,'RGB')   #array2Img
-            img2.save(r_imgByteArr, format='JPEG') 
-            r_img_read = r_imgByteArr.getvalue()
-            r_imgByteArr.flush()
-            r_image_64_encode = base64.b64encode(r_img_read) 
-            r_b64_numpy_arr = np.array(r_image_64_encode)
-            send_id = 'result_'+str(inum)+"_"+str(i+1)
-            r2.hmset(send_id,{'label':label_list[i],
-            'prob':str(prob_list[i]),
-            'img':str(r_b64_numpy_arr),
-            'timestamp':ts,
-            'pop':len(label_list),
-            'age' :aaggee, 
-            'gender':ggeenn,
-            'id' : id_list[i]})
             
 	print(round(time.time()-start_time,2))
         cv2.imshow("result", img)  # if don't need debuging remove imshow
         key = cv2.waitKey(1)
 
-        if key == 27:
+        if key == 27:   #detect fake user
             length = len(face_recog.new_user_compare)
             for i in range(length):
                 new_user =face_recog.new_user_compare[length-1-i][1]
@@ -153,7 +124,7 @@ def main(sess,age,gender,train_mode,images_pl):
             print('finish')
             break
 
-def load_network(model_path):
+def load_network(model_path):   #load age, gender model
     sess = tf.Session()
     images_pl = tf.placeholder(tf.float32, shape=[None, 160, 160, 3], name='input_image')
     images_norm = tf.map_fn(lambda frame: tf.image.per_image_standardization(frame), images_pl)
