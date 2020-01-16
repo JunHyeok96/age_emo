@@ -44,3 +44,6 @@
 <img src="https://user-images.githubusercontent.com/52908154/72506336-068e0d00-3885-11ea-97de-459c0534bff4.png" width="30%">
 
 (프로그램이 종료되고 기존의 유저 폴더에 병합됨)
+
+
+*UnKnown 유저 판별시 기준이되는 distance의 임계치는 요구되는 사항에 따라 적절히 수정가능하며 이미지 저장 기준 및 새로운 유저 등록에 대한 수정을 권장함
