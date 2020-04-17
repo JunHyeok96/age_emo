@@ -54,3 +54,5 @@
 ### 해당 코드를 기반으로 만들어진 얼굴 인식 기반 광고 전환입니다.
 ![ezgif com-optimize (2)](https://user-images.githubusercontent.com/52908154/79597591-83977f80-811d-11ea-882f-c3967f057901.gif)
 
+* 라즈베리파이와 홀로그램 프로젝터 간 시리얼 통신을 사용했습니다.
+
